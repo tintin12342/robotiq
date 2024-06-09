@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -7,28 +7,32 @@ import {
   FormsModule,
   NgForm,
   ReactiveFormsModule,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   MatCheckboxChange,
   MatCheckboxModule,
 } from '@angular/material/checkbox';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { ProcessService } from '../services/process.service';
+import { DEFAULT_USER } from '../../environments/environment';
+import { Process } from '../models/Process';
+import { Subscription } from 'rxjs';
 
-export class MyErrorStateMatcher implements ErrorStateMatcher {
+class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
     control: FormControl | null,
     form: FormGroupDirective | NgForm | null
   ): boolean {
-    const isSubmitted = form && form.submitted;
     return !!(
       control &&
       control.invalid &&
-      (control.dirty || control.touched || isSubmitted)
+      (control.dirty || control.touched || (form && form.submitted))
     );
   }
 }
@@ -49,17 +53,21 @@ export enum ButtonSelected {
     MatInputModule,
     ReactiveFormsModule,
     MatCheckboxModule,
+    MatSnackBarModule,
     MatButtonModule,
+    MatProgressBarModule,
   ],
   templateUrl: './credentials.component.html',
   styleUrl: './credentials.component.scss',
 })
-export class CredentialsComponent {
+export class CredentialsComponent implements OnDestroy {
+  private processService = inject(ProcessService);
+  private snackBar = inject(MatSnackBar);
+  private processSubscriptions: Subscription[] = [];
   matcher = new MyErrorStateMatcher();
-
+  fetchingData: boolean = false;
   buttonSelected = ButtonSelected;
   clickedButton!: ButtonSelected;
-
   form: FormGroup = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
@@ -71,12 +79,10 @@ export class CredentialsComponent {
    * Adjusts validators and enables/disables form controls based on the checkbox state.
    */
   onCheckboxChange($event: MatCheckboxChange): void {
-    const controls: FormControl[] = ['username', 'password'].map(
+    const controls = ['username', 'password'].map(
       (name) => this.form.get(name) as FormControl
     );
-    const validators: ValidatorFn | null = $event.checked
-      ? null
-      : Validators.required;
+    const validators = $event.checked ? null : Validators.required;
 
     controls.forEach((control) => {
       control.clearValidators();
@@ -96,24 +102,50 @@ export class CredentialsComponent {
   /*
    * Assign the clicked button to buttonSelected prior to form submission
    */
-  onButtonClick(selectedButton: ButtonSelected) {
+  onButtonClick(selectedButton: ButtonSelected): void {
     this.clickedButton = selectedButton;
   }
 
-  onSubmit() {
+  onSubmit(): void {
+    const { username, password, checkBox } = this.form.value;
+
     if (!this.clickedButton) return;
-    switch (this.clickedButton) {
-      case ButtonSelected.GET_VARIABLES:
-        // TODO:: Implement GET_VARIABLES
-        break;
-      case ButtonSelected.GET_VARIABLE_OCCURENCE:
-        // TODO:: Implement GET_VARIABLE_OCCURENCE
-        break;
-      case ButtonSelected.GET_PARENT_STEP_LIST:
-        // TODO:: Implement GET_PARENT_STEP_LIST
-        break;
-      default:
-        console.log('Unknown button clicked');
-    }
+    this.unsubscribeSubscriptions();
+
+    const user = checkBox ? DEFAULT_USER : { username, password };
+
+    this.fetchingData = true;
+    const subscription = this.processService
+      .getProcess(user.username, user.password)
+      .subscribe({
+        next: (process: Process) => {
+          this.fetchingData = false;
+          switch (this.clickedButton) {
+            case ButtonSelected.GET_VARIABLES:
+              this.processService.getVariablesSubject$.next(process);
+              break;
+            case ButtonSelected.GET_VARIABLE_OCCURENCE:
+              this.processService.getVariableOccurenceSubject$.next(process);
+              break;
+            case ButtonSelected.GET_PARENT_STEP_LIST:
+              this.processService.getParentStepListSubject$.next(process);
+              break;
+          }
+        },
+        error: (errorMsg: string) => {
+          this.fetchingData = false;
+          this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
+        },
+      });
+
+    this.processSubscriptions.push(subscription);
+  }
+
+  unsubscribeSubscriptions(): void {
+    this.processSubscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeSubscriptions();
   }
 }
