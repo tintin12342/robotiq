@@ -5,13 +5,13 @@
 .card {
     width: 100%;
     max-height: 250px;
-    overflow-y: auto;
-}
-
-.card-content {
-    padding: 16px 18px !important;
+    overflow: auto;
 }
 
 .list-item {
-    font-size: 0.875rem;
+    padding: 0 24px;
+}
+
+mat-divider {
+    padding-bottom: 1rem;
 }

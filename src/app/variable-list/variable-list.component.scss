@@ -8,10 +8,10 @@
     overflow-y: auto;
 }
 
-.card-content {
-    padding: 16px 18px !important;
+.list-item {
+    padding: 0 24px;
 }
 
-.list-item {
-    font-size: 0.875rem;
+mat-divider {
+    padding-bottom: 1rem;
 }
