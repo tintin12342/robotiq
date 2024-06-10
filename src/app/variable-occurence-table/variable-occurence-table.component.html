@@ -1,31 +1,12 @@
 <section class="main-container">
   <mat-card>
     <mat-card-content>
-      <mat-table [dataSource]="dataSource">
-        <!-- Position Column -->
-        <ng-container matColumnDef="position">
-          <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            {{ element.position }}
-          </mat-cell>
-        </ng-container>
+      <mat-table [dataSource]="dataSource" *ngIf="dataSource.length > 0; else noData">
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
-        </ng-container>
-
-        <!-- Weight Column -->
-        <ng-container matColumnDef="weight">
-          <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.weight }} </mat-cell>
-        </ng-container>
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="symbol">
-          <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.symbol }} </mat-cell>
+        <!-- Define columns dynamically based on titles -->
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef> {{ column }} </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -34,3 +15,7 @@
     </mat-card-content>
   </mat-card>
 </section>
+
+<ng-template #noData>
+  <div>Press get variable occurrence button</div>
+</ng-template>

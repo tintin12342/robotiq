@@ -16,6 +16,7 @@ export interface StepBase {
     stepType: StepType;
     id: string;
     windowProcessInfo?: WindowProcessInfo;
+    stepName?: string;
 }
 
 export interface DefineVariableStep extends StepBase {

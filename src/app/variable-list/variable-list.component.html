@@ -1,15 +1,24 @@
-<section class="main-container" *ngIf="defineVariableSteps.length > 0">
-  <h1>{{ processName }}</h1>
+<section class="main-container">
+  <h1 *ngIf="(process$ | async)?.process as process; else call">
+    {{ process.robotiqProcessInfo.name }}
+  </h1>
   <mat-card class="card">
-    <mat-card-content>
-      <mat-list role="list">
-        <mat-list-item
-          *ngFor="let variableName of defineVariableSteps"
-          role="listitem"
-        >
-          {{ variableName }}
-        </mat-list-item>
-      </mat-list>
+    <mat-card-content class="card-content">
+      <ng-container *ngIf="defineVariableStepsSubject$ | async as defineVariableSteps">
+        <mat-list role="list" *ngIf="defineVariableSteps.length > 0; else noData">
+          <mat-list-item *ngFor="let variableName of defineVariableSteps" role="listitem">
+            <span class="list-item">{{ variableName }}</span>
+          </mat-list-item>
+        </mat-list>
+      </ng-container>
     </mat-card-content>
   </mat-card>
 </section>
+
+<ng-template #call>
+  <h1>Call the api to get the data</h1>
+</ng-template>
+
+<ng-template #noData>
+  <span class="list-item">Press get variables button</span>
+</ng-template>
