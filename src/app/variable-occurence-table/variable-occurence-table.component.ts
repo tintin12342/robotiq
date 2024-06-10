@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import {
@@ -11,6 +11,7 @@ import {
 } from '../models/Process';
 import { ButtonSelected } from '../credentials/credentials.component';
 import { ProcessService } from '../services/process.service';
+import { Subscription } from 'rxjs';
 
 interface StepDataSource {
   title: string;
@@ -24,16 +25,17 @@ interface StepDataSource {
   templateUrl: './variable-occurence-table.component.html',
   styleUrl: './variable-occurence-table.component.scss',
 })
-export class VariableOccurenceTableComponent implements OnInit {
+export class VariableOccurenceTableComponent implements OnInit, OnDestroy {
   processService = inject(ProcessService);
+  processSubscription: Subscription = new Subscription();
   displayedColumns: string[] = ['title', 'names'];
   dataSource: StepDataSource[] = [];
 
   ngOnInit(): void {
-    this.processService.processSubject$.subscribe(
+    this.processSubscription = this.processService.processSubject$.subscribe(
       (processData: { process: Process; button: ButtonSelected }) => {
-        if (processData.button !== ButtonSelected.GET_VARIABLE_OCCURENCE) return;
-
+        if (Object.keys(processData).length === 0 || processData.button === ButtonSelected.GET_VARIABLES) return;
+        
         // If get variable occurence is pressed first the variables list above must be filled
         this.processService.defineVariableStepsSubject$.next(
           this.processService.findVariables(processData.process.steps)
@@ -47,6 +49,8 @@ export class VariableOccurenceTableComponent implements OnInit {
 
         const stepsData = this.createVariableMap(stepsWithAsterisk, idsOfStepsWithAsterisk);
         this.refactorDataSource(stepsData);
+
+        this.processService.stepsWithAsterickSubject$.next(stepsWithAsterisk);
       }
     );
   }
@@ -104,5 +108,9 @@ export class VariableOccurenceTableComponent implements OnInit {
       });
       return row;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.processSubscription.unsubscribe();
   }
 }

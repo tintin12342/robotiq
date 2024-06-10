@@ -20,6 +20,7 @@ export class ProcessService {
     button: ButtonSelected;
   }>({} as { process: Process; button: ButtonSelected });
   defineVariableStepsSubject$ = new BehaviorSubject<string[]>([]);
+  stepsWithAsterickSubject$ = new BehaviorSubject<Step[]>([]);
 
   private http = inject(HttpClient);
 

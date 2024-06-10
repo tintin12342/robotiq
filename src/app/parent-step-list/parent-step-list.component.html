@@ -1,10 +1,15 @@
 <section class="main-container">
   <mat-card class="card">
-    <mat-card-content>
-      <mat-list role="list">
-        <mat-list-item role="listitem">Item 1</mat-list-item>
-        <mat-list-item role="listitem">Item 2</mat-list-item>
-      </mat-list>
+    <mat-card-content class="card-content">
+      <ng-container *ngIf="stepList.length > 0; else noData">
+        <mat-list-item role="listitem" *ngFor="let step of stepList">
+          <span class="list-item">{{ step.join(' <- ') }}</span>
+        </mat-list-item>
+      </ng-container>
     </mat-card-content>
   </mat-card>
 </section>
+
+<ng-template #noData>
+  <span class="list-item">Press get parent step list button</span>
+</ng-template>
