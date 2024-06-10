@@ -45,17 +45,13 @@ export class VariableOccurenceTableComponent implements OnInit {
 
         this.findStepsWithAsterisk(processData.process.steps, stepsWithAsterisk, idsOfStepsWithAsterisk);
 
-        const variableMap = this.createVariableMap(stepsWithAsterisk, idsOfStepsWithAsterisk);
-        this.prepareDataSource(variableMap);
+        const stepsData = this.createVariableMap(stepsWithAsterisk, idsOfStepsWithAsterisk);
+        this.refactorDataSource(stepsData);
       }
     );
   }
 
-  findStepsWithAsterisk(
-    steps: Step[],
-    stepsWithAsterisk: Step[],
-    idsOfStepsWithAsteriks: string[]
-  ) {
+  private findStepsWithAsterisk(steps: Step[], stepsWithAsterisk: Step[], idsOfStepsWithAsteriks: string[]) {
     const asteriskRegex = /\*/;
 
     for (const step of steps) {
@@ -66,19 +62,12 @@ export class VariableOccurenceTableComponent implements OnInit {
           idsOfStepsWithAsteriks.push(step.id);
         }
       } else if ('children' in step) {
-        this.findStepsWithAsterisk(
-          step.children,
-          stepsWithAsterisk,
-          idsOfStepsWithAsteriks
-        );
+        this.findStepsWithAsterisk(step.children, stepsWithAsterisk, idsOfStepsWithAsteriks);
       }
     }
   }
 
-  createVariableMap(
-    steps: Step[],
-    stepIds: string[]
-  ): { title: string; names: string[] }[] {
+  private createVariableMap(steps: Step[], stepIds: string[]): StepDataSource[] {
     const map: { [key: string]: string[] } = {};
 
     steps.forEach((step) => {
@@ -97,20 +86,20 @@ export class VariableOccurenceTableComponent implements OnInit {
     }));
   }
 
-  prepareDataSource(variableMap: { title: string; names: string[] }[]) {
-    if (variableMap.length === 0) return;
+  private refactorDataSource(stepsData: StepDataSource[]) {
+    if (stepsData.length === 0) return;
 
     // Extract titles
-    this.displayedColumns = variableMap.map(item => item.title);
+    this.displayedColumns = stepsData.map(item => item.title);
 
     // Determine the maximum number of names for any title
-    const maxNames = Math.max(...variableMap.map(item => item.names.length));
+    const maxNames = Math.max(...stepsData.map(item => item.names.length));
 
     // Create rows
     this.dataSource = Array.from({ length: maxNames }, (_, rowIndex) => {
       const row: any = {};
       this.displayedColumns.forEach(title => {
-        const variable = variableMap.find(item => item.title === title);
+        const variable = stepsData.find(item => item.title === title);
         row[title] = variable?.names[rowIndex] || '';
       });
       return row;
