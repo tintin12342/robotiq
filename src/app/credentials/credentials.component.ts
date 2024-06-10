@@ -122,13 +122,13 @@ export class CredentialsComponent implements OnDestroy {
           this.fetchingData = false;
           switch (this.clickedButton) {
             case ButtonSelected.GET_VARIABLES:
-              this.processService.getVariablesSubject$.next(process);
+              this.processService.processSubject$.next({process, button: ButtonSelected.GET_VARIABLES});
               break;
             case ButtonSelected.GET_VARIABLE_OCCURENCE:
-              this.processService.getVariableOccurenceSubject$.next(process);
+              this.processService.processSubject$.next({process, button: ButtonSelected.GET_VARIABLE_OCCURENCE});
               break;
             case ButtonSelected.GET_PARENT_STEP_LIST:
-              this.processService.getParentStepListSubject$.next(process);
+              this.processService.processSubject$.next({process, button: ButtonSelected.GET_PARENT_STEP_LIST});
               break;
           }
         },

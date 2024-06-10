@@ -3,14 +3,16 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Process } from '../models/Process';
 import { API } from '../../environments/environment';
+import { ButtonSelected } from '../credentials/credentials.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProcessService {
-  getVariablesSubject$ = new BehaviorSubject<Process>({} as Process);
-  getVariableOccurenceSubject$ = new BehaviorSubject<Process>({} as Process);
-  getParentStepListSubject$ = new BehaviorSubject<Process>({} as Process);
+  processSubject$ = new BehaviorSubject<{
+    process: Process;
+    button: ButtonSelected;
+  }>({} as { process: Process; button: ButtonSelected });
 
   private http = inject(HttpClient);
 

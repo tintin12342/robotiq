@@ -8,47 +8,47 @@ export enum StepType {
     ElseStep = "ElseStep",
 }
 
-interface WindowProcessInfo {
+export interface WindowProcessInfo {
     waitWindowToActivate: boolean;
 }
 
-interface StepBase {
+export interface StepBase {
     stepType: StepType;
     id: string;
     windowProcessInfo?: WindowProcessInfo;
 }
 
-interface DefineVariableStep extends StepBase {
+export interface DefineVariableStep extends StepBase {
     stepType: StepType.DefineVariableStep;
     variableType: number;
     variableName: string;
     initialValue: string;
 }
 
-interface ClickStep extends StepBase {
+export interface ClickStep extends StepBase {
     stepType: StepType.ClickStep;
 }
 
-interface DoubleClickStep extends StepBase {
+export interface DoubleClickStep extends StepBase {
     stepType: StepType.DoubleClickStep;
 }
 
-interface StringInputStep extends StepBase {
+export interface StringInputStep extends StepBase {
     stepType: StepType.StringInputStep;
     value: string;
 }
 
-interface IfStep extends StepBase {
+export interface IfStep extends StepBase {
     stepType: StepType.IfStep;
     children: Step[];
 }
 
-interface ElseIfStep extends StepBase {
+export interface ElseIfStep extends StepBase {
     stepType: StepType.ElseIfStep;
     children: Step[];
 }
 
-interface ElseStep extends StepBase {
+export interface ElseStep extends StepBase {
     stepType: StepType.ElseStep;
     children: Step[];
 }
