@@ -31,6 +31,7 @@ export class ParentStepListComponent implements OnInit {
 
           this.processService.stepsWithAsterickSubject$.subscribe(
             (targetedSteps: Step[]) => {
+              this.stepList = [];
               targetedSteps.forEach((step: Step) => {
                 let currentPath: string[] = [];
                 currentPath = this.findParentSteps(
