@@ -3,8 +3,8 @@ import { RouterOutlet } from '@angular/router';
 import { CredentialsComponent } from './credentials/credentials.component';
 import { ParentStepListComponent } from './parent-step-list/parent-step-list.component';
 import { VariableListComponent } from './variable-list/variable-list.component';
-import { VariableOccurenceTableComponent } from './variable-occurence-table/variable-occurence-table.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { VariableOccurrenceTableComponent } from './variable-occurrence-table/variable-occurrence-table.component';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,7 @@ import { MatDividerModule } from '@angular/material/divider';
     CredentialsComponent,
     ParentStepListComponent,
     VariableListComponent,
-    VariableOccurenceTableComponent,
+    VariableOccurrenceTableComponent,
     MatDividerModule,
   ],
   templateUrl: './app.component.html',

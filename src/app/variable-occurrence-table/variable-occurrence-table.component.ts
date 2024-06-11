@@ -20,13 +20,13 @@ interface StepDataSource {
 }
 
 @Component({
-  selector: 'app-variable-occurence-table',
+  selector: 'app-variable-occurrence-table',
   standalone: true,
   imports: [CommonModule, MatTableModule, MatCardModule],
-  templateUrl: './variable-occurence-table.component.html',
-  styleUrl: './variable-occurence-table.component.scss',
+  templateUrl: './variable-occurrence-table.component.html',
+  styleUrl: './variable-occurrence-table.component.scss',
 })
-export class VariableOccurenceTableComponent implements OnInit, OnDestroy {
+export class VariableOccurrenceTableComponent implements OnInit, OnDestroy {
   processService = inject(ProcessService);
 
   processSubscription: Subscription = new Subscription();
@@ -38,7 +38,7 @@ export class VariableOccurenceTableComponent implements OnInit, OnDestroy {
       (processData: ProcessWithClickedButton) => {
         if (Object.keys(processData).length === 0 || processData.button === ButtonSelected.GET_VARIABLES) return;
         
-        // If get variable occurence is pressed first the variables list above must be filled
+        // If get variable occurrence is pressed first the variables list above must be filled
         this.processService.variableStepsSubject$.next(
           this.processService.findVariables(processData.process.steps)
         );

@@ -46,7 +46,7 @@ class MyErrorStateMatcher implements ErrorStateMatcher {
  */
 export enum ButtonSelected {
   GET_VARIABLES = 'GET_VARIABLES',
-  GET_VARIABLE_OCCURENCE = 'GET_VARIABLE_OCCURENCE',
+  GET_VARIABLE_OCCURRENCE = 'GET_VARIABLE_OCCURRENCE',
   GET_PARENT_STEP_LIST = 'GET_PARENT_STEP_LIST',
 }
 
@@ -137,8 +137,8 @@ export class CredentialsComponent implements OnDestroy {
             case ButtonSelected.GET_VARIABLES:
               this.processService.processSubject$.next({ process, button: ButtonSelected.GET_VARIABLES });
               break;
-            case ButtonSelected.GET_VARIABLE_OCCURENCE:
-              this.processService.processSubject$.next({ process, button: ButtonSelected.GET_VARIABLE_OCCURENCE });
+            case ButtonSelected.GET_VARIABLE_OCCURRENCE:
+              this.processService.processSubject$.next({ process, button: ButtonSelected.GET_VARIABLE_OCCURRENCE });
               break;
             case ButtonSelected.GET_PARENT_STEP_LIST:
               this.processService.processSubject$.next({ process, button: ButtonSelected.GET_PARENT_STEP_LIST });
