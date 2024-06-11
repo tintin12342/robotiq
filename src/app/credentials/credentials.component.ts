@@ -24,6 +24,10 @@ import { DEFAULT_USER } from '../../environments/environment';
 import { Process } from '../models/Process';
 import { Subscription } from 'rxjs';
 
+/*
+ * Used in template to check if input was touched, dirty or
+ * form was submitted
+ */
 class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
     control: FormControl | null,
@@ -37,6 +41,9 @@ class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
+/*
+ * Used to identify which button was clicked
+ */
 export enum ButtonSelected {
   GET_VARIABLES = 'GET_VARIABLES',
   GET_VARIABLE_OCCURENCE = 'GET_VARIABLE_OCCURENCE',
@@ -61,13 +68,15 @@ export enum ButtonSelected {
   styleUrl: './credentials.component.scss',
 })
 export class CredentialsComponent implements OnDestroy {
-  private processService = inject(ProcessService);
-  private snackBar = inject(MatSnackBar);
-  private processSubscriptions: Subscription[] = [];
+  processService = inject(ProcessService);
+  snackBar = inject(MatSnackBar);
+
+  processSubscriptions: Subscription[] = [];
   matcher = new MyErrorStateMatcher();
   fetchingData: boolean = false;
   buttonSelected = ButtonSelected;
   clickedButton!: ButtonSelected;
+
   form: FormGroup = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
@@ -75,7 +84,6 @@ export class CredentialsComponent implements OnDestroy {
   });
 
   /*
-   * Handles the change event of the checkbox.
    * Adjusts validators and enables/disables form controls based on the checkbox state.
    */
   onCheckboxChange($event: MatCheckboxChange): void {
@@ -100,12 +108,15 @@ export class CredentialsComponent implements OnDestroy {
   }
 
   /*
-   * Assign the clicked button to buttonSelected prior to form submission
+   * Assign clickedButton to buttonSelected before form submission
    */
   onButtonClick(selectedButton: ButtonSelected): void {
     this.clickedButton = selectedButton;
   }
 
+  /*
+   * Handles the form submission
+   */
   onSubmit(): void {
     const { username, password, checkBox } = this.form.value;
 
@@ -114,21 +125,26 @@ export class CredentialsComponent implements OnDestroy {
 
     const user = checkBox ? DEFAULT_USER : { username, password };
 
+    // For the loading bar
     this.fetchingData = true;
-    const subscription = this.processService
-      .getProcess(user.username, user.password)
-      .subscribe({
+
+    // Get process and checks which button was clicked
+    this.processSubscriptions.push(
+      this.processService.getProcess(user.username, user.password).subscribe({
         next: (process: Process) => {
           this.fetchingData = false;
           switch (this.clickedButton) {
             case ButtonSelected.GET_VARIABLES:
-              this.processService.processSubject$.next({process, button: ButtonSelected.GET_VARIABLES});
+              this.processService.processSubject$.next({ process, button: ButtonSelected.GET_VARIABLES });
               break;
             case ButtonSelected.GET_VARIABLE_OCCURENCE:
-              this.processService.processSubject$.next({process, button: ButtonSelected.GET_VARIABLE_OCCURENCE});
+              this.processService.processSubject$.next({ process, button: ButtonSelected.GET_VARIABLE_OCCURENCE });
               break;
             case ButtonSelected.GET_PARENT_STEP_LIST:
-              this.processService.processSubject$.next({process, button: ButtonSelected.GET_PARENT_STEP_LIST});
+              this.processService.processSubject$.next({ process, button: ButtonSelected.GET_PARENT_STEP_LIST });
+              break;
+            default:
+              this.snackBar.open('Something went wrong', 'Close', { duration: 5000 });
               break;
           }
         },
@@ -136,15 +152,20 @@ export class CredentialsComponent implements OnDestroy {
           this.fetchingData = false;
           this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
         },
-      });
-
-    this.processSubscriptions.push(subscription);
+      })
+    );
   }
 
+  /*
+   * Method for unsubscribing all subscriptions
+   */
   unsubscribeSubscriptions(): void {
-    this.processSubscriptions.forEach((sub) => sub.unsubscribe());
+    this.processSubscriptions.forEach((sub: Subscription) => sub.unsubscribe());
   }
 
+  /*
+   * OnDestroy remove all subscriptions
+   */
   ngOnDestroy(): void {
     this.unsubscribeSubscriptions();
   }

@@ -1,27 +1,33 @@
 # Robotiq
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.8.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.10 and uses Node.js version 20.14.0.
 
-## Development server
+## Prerequisites
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Node.js - ^18.13.0 || ^20.14.0
+- Typescript - >=5.2.0 <5.4.0
+- RxJS - ^6.5.3 || ^7.4.0
 
-## Code scaffolding
+## Getting Started
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+1. Clone the repository:
+    
+    `git clone https://github.com/tintin12342/robotiq.git`
 
-## Build
+2. Navigate to the cloned directory robotiq:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+    `cd robotiq`
 
-## Running unit tests
+3. Install the dependencies:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+    `npm install`
 
-## Running end-to-end tests
+4. Start the application:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+    `ng serve --open`
 
-## Further help
+The application will be opened on [http://localhost:4200](http://localhost:4200).
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Live demo
+
+Can be viewed on this [link](https://robotiq.up.railway.app/).

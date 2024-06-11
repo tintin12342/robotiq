@@ -1,10 +1,13 @@
 <section class="main-container">
+  <!-- PROCESS NAME -->
   <h1 *ngIf="(process$ | async)?.process as process; else call">
     {{ process.robotiqProcessInfo.name }}
   </h1>
+
+  <!-- VARIABLE LIST -->
   <mat-card class="card">
     <mat-card-content>
-      <ng-container *ngIf="defineVariableStepsSubject$ | async as defineVariableSteps">
+      <ng-container *ngIf="variableStepsSubject$ | async as defineVariableSteps">
         <div role="list" *ngIf="defineVariableSteps.length > 0; else noData">
           <div *ngFor="let variableName of defineVariableSteps" role="listitem">
             <p class="list-item">{{ variableName }}</p>
